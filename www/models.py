@@ -1,9 +1,9 @@
-# -*- coding: utf-8 -*-
-# @Time    : 2018/5/21 21:17
-# @Author  : Beartree
-# @FileName: models.py
-# @Software: PyCharm
-
+'''
+ * @Author: beartree 
+ * @Date: 2018-07-04 22:30:48 
+ * @Last Modified by:   beartree 
+ * @Last Modified time: 2018-07-04 22:30:48 
+'''
 '''
 Models for user, blog, comment
 '''
@@ -23,7 +23,7 @@ class User(Model):
     admin = BooleanField()
     name = StringField(ddl='varchar(50)')
     image = StringField(ddl='varchar(500)')
-    create_at = FloatField(default=time.time)
+    created_at = FloatField(default=time.time)
 
 class Blog(Model):
     __table__ = 'blogs'

@@ -1,3 +1,5 @@
 {
-    "python.pythonPath": "${workspaceFolder}\\venv\\Scripts\\python.exe"
+    "python.pythonPath": "D:\\MyPython\\Anaconda\\python.exe",
+    "python.linting.flake8Enabled": false,
+    "editor.fontSize": 18
 }

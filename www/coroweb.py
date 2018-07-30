@@ -176,3 +176,5 @@ def add_routes(app, module_name):
                 path = getattr(fn, '__route__', None)
                 if method and path:
                     add_route(app, fn)
+
+                    

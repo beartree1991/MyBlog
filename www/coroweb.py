@@ -10,6 +10,10 @@ from urllib import parse
 from aiohttp import web
 from apis import APIError
 
+# RequestHandler模块主要任务是在View(网页)向Controller(路由)之间建立桥梁, 与response_factory之间相对应。
+# web框架把Controller的指令构造成一个request发送给View, 然后动态生成前端页面；
+# 用户在前端页面的某些操作，通过request传回到后端，在传回到后端之前先将request进行解析，转变成后端可以处理的事务。
+# RequestHandler负责对这些request进行标准化处理。
 def get(path):
     '''
     Define decorator @get('/path')
@@ -38,11 +42,11 @@ def post(path):
 
 def get_required_kw_args(fn):
     args = []
-    params = inspect.signature(fn).parameters
-    for name, param in params.items():
+    params = inspect.signature(fn).parameters # inspect.signature(fn)将返回一个inspect.signature类型的对象，指为fn这个函数的所有参数
+    for name, param in params.items():        # i~.parameters返回一个mappingproxy(映射)类型的对象，值为OrderDict，key为参数名，value为参数信息
         if param.kind == inspect.Parameter.KEYWORD_ONLY and param.default == inspect.Parameter.empty:
-            args.append(name)
-    return tuple(args)
+            args.append(name)                 # i~.kind属性是一个_ParameterKind枚举类型的对象，值为这个参数类型(可变参数，关键词参数，位置参数，etc)
+    return tuple(args)                        # i~.default:如果这个参数有默认值，即返回这个默认值，如果没有，则返回一个inspect._empty类
 
 def get_named_kw_args(fn):
     args = []
@@ -76,6 +80,8 @@ def has_request_arg(fn):
             raise ValueError('request parameter must be the last named parameter in function: %s%s' % (fn.__name__, str(sig)))
     return found
 
+# RequestHandler目的就是从URL函数中分析其需要接受的参数，从request中获取必要的参数,
+# URL函数不一定是一个coroutine, 因此用RequestHandler()封装一个URL处理函数
 class RequestHandler(object):
     def __init__(self, app, fn):
         self._app = app
@@ -86,6 +92,7 @@ class RequestHandler(object):
         self._named_kw_args = get_named_kw_args(fn)
         self._required_kw_args = get_required_kw_args(fn)
 
+        # 任何一个类，只需要定义一个__call__()方法，就可以直接对实例进行调用
         async def __call__(self, request):
             kw = None
             if self._has_var_kw_arg or self._has_named_kw_args or self._required_kw_args:
@@ -169,4 +176,3 @@ def add_routes(app, module_name):
                 path = getattr(fn, '__route__', None)
                 if method and path:
                     add_route(app, fn)
-
